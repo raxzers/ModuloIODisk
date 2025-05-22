@@ -22,10 +22,11 @@ void createFileWithSize(const std::string& filename, std::size_t size) {
 }
 
 int main() {
+    std::cin.get();
     std::string filename = "archivo.txt";
-    std::size_t size = 1024; // Especifica el tamaño en bytes
+    std::size_t size = 1048576  ; // Especifica el tamaño en bytes
     
     createFileWithSize(filename, size);
-    
+    std::cin.get();
     return 0;
 }

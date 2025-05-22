@@ -28,6 +28,6 @@ int main() {
     if (!fileData.empty()) {
         std::cout << "Archivo cargado en memoria. Contenido: " << std::string(fileData.begin(), fileData.end()) << std::endl;
     }
-    
+    std::cin.get();
     return 0;
 }

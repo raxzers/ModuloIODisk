@@ -1,105 +1,117 @@
 #include <iostream>
 #include <csignal>
-#include <chrono>
-#include <thread>
-#include <event.h>
-extern "C" {
-    #include <bpf/libbpf.h>
-    #include <bpf/bpf.h>
-    #include <unistd.h>
-}
+#include <unistd.h>
 
-static bool running = true;
+#include <linux/bpf.h>
+#include <fcntl.h>
+#include <map>
+#include <bpf/bpf.h>      
+#include <bpf/libbpf.h>
+#include <fstream>
+#include <string>
+
+
+
+static volatile bool running = true;
 
 void handle_signal(int) {
     running = false;
 }
 
+struct event {
+    uint32_t pid;
+    char comm[16];
+    uint64_t bytes;
+    char op;
+};
 
+std::map<uint32_t, uint64_t> read_stats;
+std::map<uint32_t, uint64_t> write_stats;
+std::map<uint32_t, std::string> proc_names;
 
-int handle_event(void *ctx, void *data, size_t data_sz) {
-    if (data_sz < sizeof(read_event)) {
-        std::cerr << "Tamaño de evento inesperado." << std::endl;
-        return 0;
+void handle_event(void *ctx, int cpu, void *data, __u32 data_sz) {
+    struct event *e = (struct event *)data;
+    proc_names[e->pid] = e->comm;
+
+    if (e->op == 'R')
+        read_stats[e->pid] += e->bytes;
+    else if (e->op == 'W')
+        write_stats[e->pid] += e->bytes;
+
+    std::cout << "PID: " << e->pid
+              << " COMM: " << e->comm
+              << " OP: " << (e->op == 'R' ? "READ" : "WRITE")
+              << " BYTES: " << e->bytes
+              << std::endl;
+}
+
+void print_stats() {
+    std::cout << "PID\tREAD_BYTES\tWRITE_BYTES\tCOMM\n";
+    for (const auto& [pid, name] : proc_names) {
+        std::cout << pid << "\t" << read_stats[pid]
+                  << "\t\t" << write_stats[pid]
+                  << "\t\t" << name << "\n";
     }
-
-    const read_event *e = static_cast<const read_event *>(data);
-
-    // Filtrar solo si el proceso se llama guardarArchivo
-    if (std::string(e->comm) == "guardarArchivo") {
-        std::cout << "PID: " << e->pid
-                  << " FD: " << e->fd
-                  << " Count: " << e->count
-                  << " Comm: " << e->comm << std::endl;
-    }
-
-    return 0;
 }
 
 int main() {
     struct bpf_object *obj = nullptr;
-    struct ring_buffer *rb = nullptr;
+    struct perf_buffer *pb = nullptr;
     int err;
 
     signal(SIGINT, handle_signal);
 
-    // 1. Abrir objeto eBPF
     obj = bpf_object__open_file("monitor_read.bpf.o", nullptr);
     if (!obj) {
-        std::cerr << "Error al abrir el archivo .bpf.o" << std::endl;
+        std::cerr << "Error al abrir el archivo .bpf.o\n";
         return 1;
     }
 
-    // 2. Cargar programas y mapas
     err = bpf_object__load(obj);
     if (err) {
-        std::cerr << "Error al cargar el objeto BPF" << std::endl;
+        std::cerr << "Error al cargar el objeto BPF\n";
         return 1;
     }
 
-    // 3. Buscar programa eBPF por nombre
-    struct bpf_program *prog = bpf_object__find_program_by_name(obj, "handle_sys_enter_read");
-    if (!prog) {
-        std::cerr << "No se encontró el programa BPF" << std::endl;
-        return 1;
+    struct bpf_program *prog;
+    bpf_object__for_each_program(prog, obj) {
+        const char *sec_name = bpf_program__section_name(prog);
+        if (strcmp(sec_name, "tracepoint/syscalls/sys_exit_read") == 0) {
+            bpf_program__attach_tracepoint(prog, "syscalls", "sys_exit_read");
+        if (strcmp(sec_name, "tracepoint/syscalls/sys_exit_writev") == 0) {
+            bpf_program__attach_tracepoint(prog, "syscalls", "sys_exit_writev");
+            }
+        } else if (strcmp(sec_name, "tracepoint/syscalls/sys_exit_write") == 0) {
+            bpf_program__attach_tracepoint(prog, "syscalls", "sys_exit_write");
+        }
     }
 
-    // 4. Adjuntar al tracepoint automáticamente
-    struct bpf_link *link = bpf_program__attach(prog);
-    if (!link) {
-        std::cerr << "Error al adjuntar el programa" << std::endl;
-        return 1;
-    }
-
-    // 5. Obtener el fd del mapa ringbuf
     int map_fd = bpf_object__find_map_fd_by_name(obj, "events");
     if (map_fd < 0) {
-        std::cerr << "No se encontró el mapa 'events'" << std::endl;
+        std::cerr << "No se encontró el mapa 'events'\n";
         return 1;
     }
 
-    // 6. Configurar el ring buffer
-    rb = ring_buffer__new(map_fd, handle_event, nullptr, nullptr);
-    if (!rb) {
-        std::cerr << "Error al crear ring_buffer" << std::endl;
+    pb = perf_buffer__new(map_fd, 8, handle_event, nullptr, nullptr, nullptr);
+    if (!pb) {
+        std::cerr << "Error al crear perf_buffer\n";
         return 1;
     }
 
-    std::cout << "Escuchando eventos. Ctrl+C para salir." << std::endl;
+    std::cout << "Escuchando eventos. Ctrl+C para salir.\n";
 
-    // 7. Loop principal
     while (running) {
-        err = ring_buffer__poll(rb, 100 /* ms */);
+        err = perf_buffer__poll(pb, 100);
         if (err < 0) {
-            std::cerr << "Error en ring_buffer__poll: " << err << std::endl;
+            std::cerr << "Error en perf_buffer__poll: " << err << "\n";
             break;
         }
     }
 
-    ring_buffer__free(rb);
-    bpf_link__destroy(link);
+    print_stats();
+
+    perf_buffer__free(pb);
     bpf_object__close(obj);
 
-    std::cout << "Programa terminado." << std::endl;
     return 0;
 }
