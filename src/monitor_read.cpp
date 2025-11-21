@@ -13,6 +13,7 @@
 #include <chrono>
 #include <iomanip>
 #include <ctime>
+#include "monitor_read.skel.h"
 
 static volatile bool running = true;
 
@@ -43,7 +44,7 @@ std::map<pid_t, long long> last_time;
 std::map<uint32_t, Stats> proc_stats;
 std::map<uint32_t, std::string> proc_names;
 
-void handle_event(void *ctx, int cpu, void *data, __u32 data_sz) {
+void process_event(void *data) {
     struct event *e = (struct event *)data;
     uint32_t pid = e->pid;
 
@@ -69,7 +70,7 @@ void handle_event(void *ctx, int cpu, void *data, __u32 data_sz) {
               << "    TIME us: " << us
               << std::endl;
 
-    std::ofstream out("eventos_log.csv", std::ios::app);
+    std::ofstream out("processed_data/eventos_log.csv", std::ios::app);
     if (out) {
     static bool encabezado_escrito = false;
     if (!encabezado_escrito && out.tellp() == 0) {
@@ -121,70 +122,61 @@ void print_stats() {
 }
 
 int main() {
-    struct bpf_object *obj = nullptr;
-    struct perf_buffer *pb = nullptr;
+
+    struct ring_buffer *rb = nullptr;
     int err;
+
+    struct monitor_read_bpf *skel = monitor_read_bpf__open_and_load();
+    if (!skel) {
+        std::cerr << "Failed to open/load skeleton\n";
+        return 1;
+    }
+
+    if (monitor_read_bpf__attach(skel)) {
+        std::cerr << "Failed to attach probes\n";
+        monitor_read_bpf__destroy(skel);
+        return 1;
+    }
 
     signal(SIGINT, handle_signal);
 
-    obj = bpf_object__open_file("monitor_read.bpf.o", nullptr);
-    if (!obj) {
-        std::cerr << "Error al abrir el archivo .bpf.o\n";
-        return 1;
-    }
-
-    err = bpf_object__load(obj);
-    if (err) {
-        std::cerr << "Error al cargar el objeto BPF\n";
-        return 1;
-    }
-
-    struct bpf_program *prog;
-    bpf_object__for_each_program(prog, obj) {
-        const char *sec_name = bpf_program__section_name(prog);
-        if (strcmp(sec_name, "tracepoint/syscalls/sys_exit_read") == 0) {
-            bpf_program__attach_tracepoint(prog, "syscalls", "sys_exit_read");
-        if (strcmp(sec_name, "tracepoint/syscalls/sys_exit_writev") == 0) {
-            bpf_program__attach_tracepoint(prog, "syscalls", "sys_exit_writev");
-            }
-        } else if (strcmp(sec_name, "tracepoint/syscalls/sys_exit_write") == 0) {
-            bpf_program__attach_tracepoint(prog, "syscalls", "sys_exit_write");
-        }
-    }
-
-    int map_fd = bpf_object__find_map_fd_by_name(obj, "events");
+    // Obtener FD del mapa ringbuf
+    int map_fd = bpf_map__fd(skel->maps.events);
     if (map_fd < 0) {
         std::cerr << "No se encontró el mapa 'events'\n";
         return 1;
     }
 
-    pb = perf_buffer__new(map_fd, 8, handle_event, nullptr, nullptr, nullptr);
-    if (!pb) {
-        std::cerr << "Error al crear perf_buffer\n";
+    auto handle_event = [](void *ctx, void *data, size_t size) {
+        
+
+            process_event(data);
+        
+        return 0;
+    };
+
+    // Crear ring buffer
+    rb = ring_buffer__new(map_fd, handle_event, nullptr, nullptr);
+    if (!rb) {
+        std::cerr << "Error al crear ring_buffer\n";
         return 1;
     }
 
-    std::cout << "Escuchando eventos. Ctrl+C para salir.\n";
+    std::cout << "Escuchando eventos con ring_buffer. Ctrl+C para salir.\n";
 
     while (running) {
-        err = perf_buffer__poll(pb, 100);
+        err = ring_buffer__poll(rb, 100 /* ms */);
         if (err < 0) {
-            std::cerr << "Error en perf_buffer__poll: " << err << "\n";
+            //std::cerr << "Error en ring_buffer__poll: " << err << "\n";
             break;
         }
+        // err >= 0 significa OK (cantidad de eventos procesados)
     }
 
     print_stats();
 
-    
-
-    perf_buffer__free(pb);
-    bpf_object__close(obj);
-
-    
-
-
-
-
+    ring_buffer__free(rb);
+    //bpf_object__close(obj);
+    monitor_read_bpf__destroy(skel);
     return 0;
 }

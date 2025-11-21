@@ -1,36 +1,72 @@
-# Paths
-INCLUDES := -Iinclude
-SRC_DIR := src
-BPF_SRC := $(SRC_DIR)/monitor_read.bpf.c
-BPF_OBJ := monitor_read.bpf.o 
+# =========================
+#  Configuración general
+# =========================
+CLANG ?= clang
+CXX   ?= g++
+LIBBPF_DIR ?= /usr/lib/bpf
 
+CFLAGS = -O2 -g -Wall -m64 -I$(LIBBPF_DIR)/include -I./include -I./src
+BPF_CFLAGS = -O2 -g -target bpf -D__TARGET_ARCH_$(shell uname -m) \
+	      -I. -I./include -I$(LIBBPF_DIR)/include
 
-# Tools
-CLANG := clang
-CXX := g++
-CXXFLAGS := -O2 -g $(INCLUDES)
-BPF_CLANG_FLAGS := -O2 -g -target bpf -D__TARGET_ARCH_$(shell uname -m) -I. -I./include
+BUILD_DIR := build
+SRC_DIR   := src
+PROC_DIR  := processed_data
 
-# Libs
+BPF_SRC    := $(SRC_DIR)/monitor_read.bpf.c
+BPF_OBJ    := $(BUILD_DIR)/monitor_read.bpf.o
+USER_OBJ   := $(BUILD_DIR)/monitor_read
+
+VMLINUX_H  := $(SRC_DIR)/vmlinux.h
+SKEL_HDR   := $(SRC_DIR)/monitor_read.skel.h
+
 LIBS := -lbpf -lelf -lz
 
-# Targets
-all: monitor_read
+# =========================
+#  Target principal
+# =========================
+all: $(USER_OBJ)
 
-monitor_read: $(SRC_DIR)/monitor_read.cpp $(BPF_OBJ)
-	
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LIBS)
+# =========================
+#  Directorios requeridos
+# =========================
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+	mkdir -p $(PROC_DIR)
 
-$(BPF_OBJ): $(BPF_SRC) vmlinux.h
-	$(CLANG) $(BPF_CLANG_FLAGS) -c $< -o $@
+# =========================
+#  Generar vmlinux.h
+# =========================
+$(VMLINUX_H): | $(BUILD_DIR)
+	bpftool btf dump file /sys/kernel/btf/vmlinux format c > $@
 
-vmlinux.h:
-	bpftool btf dump file /sys/kernel/btf/vmlinux format c > vmlinux.h
+# =========================
+#  Compilar el BPF
+# =========================
+$(BPF_OBJ): $(BPF_SRC) $(VMLINUX_H) | $(BUILD_DIR)
+	$(CLANG) $(BPF_CFLAGS) -c $< -o $@
 
+# =========================
+#  Generar skeleton
+# =========================
+$(SKEL_HDR): $(BPF_OBJ)
+	bpftool gen skeleton $< > $@
+
+# =========================
+#  Compilar user space
+# =========================
+$(USER_OBJ): $(SRC_DIR)/monitor_read.cpp $(SKEL_HDR) | $(BUILD_DIR)
+	$(CXX) $(CFLAGS) -o $@ $< $(LIBS)
+
+# =========================
+#  Limpiar
+# =========================
 clean:
-	rm -f monitor_read $(BPF_OBJ) vmlinux.h
+	rm -rf $(BUILD_DIR)
+	rm -f  $(SRC_DIR)/*.skel.h $(SRC_DIR)/vmlinux.h
 
-
-correr:
-	sudo mount -t bpf bpf /sys/fs/bpf
-	sudo ./monitor_read
+# =========================
+#  Ejecutar
+# =========================
+run:
+	sudo ./build/monitor_read

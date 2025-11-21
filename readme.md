@@ -1,4 +1,4 @@
-# ModuloIODisk: A module to obtain the bytes written and read to disk
+# ModuloIODisk: An moule for obtenr los bytes escrito y leidos al disco
 
 Proof of concept to obtain the bytes written and read to disk for a specific process
 

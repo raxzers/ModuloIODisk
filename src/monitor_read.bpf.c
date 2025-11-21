@@ -17,23 +17,10 @@ struct event {
     char op; // 'R' para read, 'W' para write
 };
 
-
 struct {
-    __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
-    __uint(key_size, sizeof(int));
-    __uint(value_size, sizeof(__u32));
+    __uint(type, BPF_MAP_TYPE_RINGBUF);
+    __uint(max_entries, 1 << 24); // 16 MB
 } events SEC(".maps");
-
-
-
-
-struct {
-    __uint(type, BPF_MAP_TYPE_HASH);
-    __uint(max_entries, 1024);
-    __type(key, u32);
-    __type(value, u64);
-} read_bytes SEC(".maps");
-
 
 
 SEC("tracepoint/syscalls/sys_exit_read")
@@ -43,14 +30,20 @@ int handle_sys_exit_read(struct trace_event_raw_sys_exit *ctx) {
         return 0;
 
     struct event data = {};
-    data.pid = bpf_get_current_pid_tgid() >> 32;
+    data.pid = (u32)(bpf_get_current_pid_tgid() >> 32);
     bpf_get_current_comm(&data.comm, sizeof(data.comm));
-    if (!is_target(data.comm))  {
-        return 0;}
-    data.bytes = ret;
+    if (!is_target(data.comm))
+        return 0;
+
+    data.bytes = (u64)ret;
     data.op = 'R';
 
-    bpf_perf_event_output(ctx, &events, BPF_F_CURRENT_CPU, &data, sizeof(data));
+    void *buf = bpf_ringbuf_reserve(&events, sizeof(data), 0);
+    if (!buf)
+        return 0;
+    __builtin_memcpy(buf, &data, sizeof(data));
+    bpf_ringbuf_submit(buf, 0);
+
     return 0;
 }
 
@@ -62,32 +55,19 @@ int handle_sys_exit_write(struct trace_event_raw_sys_exit *ctx) {
         return 0;
 
     struct event data = {};
-    data.pid = bpf_get_current_pid_tgid() >> 32;
+    data.pid = (u32)(bpf_get_current_pid_tgid() >> 32);
     bpf_get_current_comm(&data.comm, sizeof(data.comm));
-    if (!is_target(data.comm))  {
-        return 0;}
-    
-    data.bytes = ret;
-    data.op = 'W';
-
-    bpf_perf_event_output(ctx, &events, BPF_F_CURRENT_CPU, &data, sizeof(data));
-    return 0;
-}
-// Manejo de sys_exit_writev
-SEC("tracepoint/syscalls/sys_exit_writev")
-int handle_sys_exit_writev(struct trace_event_raw_sys_exit *ctx) {
-    s64 ret = ctx->ret;
-    if (ret <= 0)
+    if (!is_target(data.comm))
         return 0;
 
-    struct event data = {};
-    data.pid = bpf_get_current_pid_tgid() >> 32;
-    bpf_get_current_comm(&data.comm, sizeof(data.comm));
-    if (!is_target(data.comm))  {
-        return 0;}
-    data.bytes = ret;
+    data.bytes = (u64)ret;
     data.op = 'W';
 
-    bpf_perf_event_output(ctx, &events, BPF_F_CURRENT_CPU, &data, sizeof(data));
+    void *buf = bpf_ringbuf_reserve(&events, sizeof(data), 0);
+    if (!buf)
+        return 0;
+    __builtin_memcpy(buf, &data, sizeof(data));
+    bpf_ringbuf_submit(buf, 0);
+
     return 0;
 }
