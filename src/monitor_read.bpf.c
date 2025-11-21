@@ -5,10 +5,10 @@
 
 char LICENSE[] SEC("license") = "Dual BSD/GPL";
 
-static __inline int is_target(const char *comm) {
+/*static __inline int is_target(const char *comm) {
     return (__builtin_memcmp(comm, "crearArchivo", 13) == 0 ||
             __builtin_memcmp(comm, "guardarArchivo", 14) == 0);
-}
+}*/
 
 struct event {
     u32 pid;
@@ -22,17 +22,24 @@ struct {
     __uint(max_entries, 1 << 24); // 16 MB
 } events SEC(".maps");
 
-
 SEC("tracepoint/syscalls/sys_exit_read")
 int handle_sys_exit_read(struct trace_event_raw_sys_exit *ctx) {
     s64 ret = ctx->ret;
     if (ret <= 0)
         return 0;
 
+    // FILTRO: ignorar lecturas pequeñas
+    if (ret < 512)   // puedes subirlo a 512, 1024 o 4096
+        return 0;
+
     struct event data = {};
     data.pid = (u32)(bpf_get_current_pid_tgid() >> 32);
     bpf_get_current_comm(&data.comm, sizeof(data.comm));
-    if (!is_target(data.comm))
+
+    u64 uid_gid = bpf_get_current_uid_gid();
+    u32 uid = uid_gid & 0xFFFFFFFF;
+
+    if (uid != 1000)
         return 0;
 
     data.bytes = (u64)ret;
@@ -41,6 +48,7 @@ int handle_sys_exit_read(struct trace_event_raw_sys_exit *ctx) {
     void *buf = bpf_ringbuf_reserve(&events, sizeof(data), 0);
     if (!buf)
         return 0;
+
     __builtin_memcpy(buf, &data, sizeof(data));
     bpf_ringbuf_submit(buf, 0);
 
@@ -54,10 +62,18 @@ int handle_sys_exit_write(struct trace_event_raw_sys_exit *ctx) {
     if (ret <= 0)
         return 0;
 
+    // FILTRO
+    if (ret < 4097)
+        return 0;
+
     struct event data = {};
     data.pid = (u32)(bpf_get_current_pid_tgid() >> 32);
     bpf_get_current_comm(&data.comm, sizeof(data.comm));
-    if (!is_target(data.comm))
+
+    u64 uid_gid = bpf_get_current_uid_gid();
+    u32 uid = uid_gid & 0xFFFFFFFF;
+
+    if (uid != 1000)
         return 0;
 
     data.bytes = (u64)ret;
@@ -66,6 +82,7 @@ int handle_sys_exit_write(struct trace_event_raw_sys_exit *ctx) {
     void *buf = bpf_ringbuf_reserve(&events, sizeof(data), 0);
     if (!buf)
         return 0;
+
     __builtin_memcpy(buf, &data, sizeof(data));
     bpf_ringbuf_submit(buf, 0);
 

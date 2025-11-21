@@ -65,6 +65,7 @@ void process_event(void *data) {
     long long us = std::chrono::duration_cast<std::chrono::microseconds>(epoch).count();
 
     std::cout << "PID: " << e->pid
+              << " COMM: " << e->comm
               << " OP: " << (e->op == 'R' ? "READ" : "WRITE")
               << " BYTES: " << e->bytes
               << "    TIME us: " << us
