@@ -1,0 +1,215 @@
+  Total DISK READ:    0,00 B   |   Total DISK WRITE:    0,00 B  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    0,00 B/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+  Total DISK READ:    0,00 B   |   Total DISK WRITE:  232,00 K  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    0,00 B/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 13603 be/4 root          0,00 B      4,00 K   0,00 % 0,00 % iotop
+  Total DISK READ:    0,00 B   |   Total DISK WRITE:  232,00 K  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    0,00 B/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 13603 be/4 root          0,00 B      4,00 K   0,00 % 0,00 % iotop
+  Total DISK READ:    0,00 B   |   Total DISK WRITE:  424,00 K  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:   69,30 K/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-endio-write
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-events_unbound
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-btrfs-endio-write
+ 12396 be/4 root          0,00 B     64,00 K   0,00 % 0,00 % kworker/u16:33-events_unbound
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B      4,00 K   0,00 % 0,00 % iotop
+  Total DISK READ:    0,00 B   |   Total DISK WRITE:  424,00 K  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    7,70 K/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-btrfs-delalloc
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-gfx
+ 12396 be/4 root          0,00 B     64,00 K   0,00 % 0,00 % kworker/u16:33-flush-btrfs-1
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B      4,00 K   0,00 % 0,00 % iotop
+  Total DISK READ:    0,00 B   |   Total DISK WRITE:  424,00 K  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    0,00 B/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-btrfs-delalloc
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-flush-btrfs-1
+ 12396 be/4 root          0,00 B     64,00 K   0,00 % 0,00 % kworker/u16:33-flush-btrfs-1
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B      4,00 K   0,00 % 0,00 % iotop
+  Total DISK READ:   80,00 K   |   Total DISK WRITE:    2,65 M  
+Current DISK READ:   74,84 K/s | Current DISK WRITE:    6,24 M/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   410 be/4 root         80,00 K      2,22 M   0,00 % 0,00 % btrfs-transaction
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-btrfs-delalloc
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-events_unbound
+ 12396 be/4 root          0,00 B     64,00 K   0,00 % 0,00 % kworker/u16:33-flush-btrfs-1
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B      4,00 K   0,00 % 0,00 % iotop
+ 13613 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % monitor_read
+  Total DISK READ:   80,00 K   |   Total DISK WRITE:    2,65 M  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    0,00 B/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   410 be/4 root         80,00 K      2,22 M   0,00 % 0,00 % btrfs-transaction
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-btrfs-delalloc
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-events_unbound
+ 12396 be/4 root          0,00 B     64,00 K   0,00 % 0,00 % kworker/u16:33-flush-btrfs-1
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B      8,00 K   0,00 % 0,00 % iotop
+ 13613 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % monitor_read
+  Total DISK READ:   80,00 K   |   Total DISK WRITE:    2,65 M  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    0,00 B/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   410 be/4 root         80,00 K      2,22 M   0,00 % 0,00 % btrfs-transaction
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-btrfs-delalloc
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-events_unbound
+ 12396 be/4 root          0,00 B     64,00 K   0,00 % 0,00 % kworker/u16:33-flush-btrfs-1
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B      8,00 K   0,00 % 0,00 % iotop
+ 13613 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % monitor_read
+  Total DISK READ:   80,00 K   |   Total DISK WRITE:    2,65 M  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    0,00 B/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   410 be/4 root         80,00 K      2,22 M   0,00 % 0,00 % btrfs-transaction
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-btrfs-delalloc
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-events_unbound
+ 12396 be/4 root          0,00 B     64,00 K   0,00 % 0,00 % kworker/u16:33-flush-btrfs-1
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B      8,00 K   0,00 % 0,00 % iotop
+ 13613 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % monitor_read
+  Total DISK READ:   80,00 K   |   Total DISK WRITE:    2,65 M  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    0,00 B/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   410 be/4 root         80,00 K      2,22 M   0,00 % 0,00 % btrfs-transaction
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-btrfs-delalloc
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-events_unbound
+ 12396 be/4 root          0,00 B     64,00 K   0,00 % 0,00 % kworker/u16:33-flush-btrfs-1
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B      8,00 K   0,00 % 0,00 % iotop
+ 13613 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % monitor_read
+  Total DISK READ:   80,00 K   |   Total DISK WRITE:    2,65 M  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    0,00 B/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   410 be/4 root         80,00 K      2,22 M   0,00 % 0,00 % btrfs-transaction
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-btrfs-delalloc
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-flush-btrfs-1
+ 12396 be/4 root          0,00 B     64,00 K   0,00 % 0,00 % kworker/u16:33-events_unbound
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B      8,00 K   0,00 % 0,00 % iotop
+ 13613 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % monitor_read
+  Total DISK READ:   80,00 K   |   Total DISK WRITE:    2,66 M  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    0,00 B/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   410 be/4 root         80,00 K      2,22 M   0,00 % 0,00 % btrfs-transaction
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-btrfs-delalloc
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-flush-btrfs-1
+ 12396 be/4 root          0,00 B     64,00 K   0,00 % 0,00 % kworker/u16:33-events_unbound
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B     12,00 K   0,00 % 0,00 % iotop
+ 13613 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % monitor_read
+  Total DISK READ:   80,00 K   |   Total DISK WRITE:    2,66 M  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    0,00 B/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   410 be/4 root         80,00 K      2,22 M   0,00 % 0,00 % btrfs-transaction
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-btrfs-delalloc
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-flush-btrfs-1
+ 12396 be/4 root          0,00 B     64,00 K   0,00 % 0,00 % kworker/u16:33-flush-btrfs-1
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B     12,00 K   0,00 % 0,00 % iotop
+ 13613 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % monitor_read
+  Total DISK READ:   80,00 K   |   Total DISK WRITE:    2,66 M  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    0,00 B/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   410 be/4 root         80,00 K      2,22 M   0,00 % 0,00 % btrfs-transaction
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-btrfs-delalloc
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-flush-btrfs-1
+ 12396 be/4 root          0,00 B     64,00 K   0,00 % 0,00 % kworker/u16:33-flush-btrfs-1
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B     12,00 K   0,00 % 0,00 % iotop
+ 13613 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % monitor_read
+  Total DISK READ:   80,00 K   |   Total DISK WRITE:    2,66 M  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    0,00 B/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   410 be/4 root         80,00 K      2,22 M   0,00 % 0,00 % btrfs-transaction
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-btrfs-delalloc
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-flush-btrfs-1
+ 12396 be/4 root          0,00 B     64,00 K   0,00 % 0,00 % kworker/u16:33-events_unbound
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B     12,00 K   0,00 % 0,00 % iotop
+ 13613 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % monitor_read
+  Total DISK READ:   80,00 K   |   Total DISK WRITE:    2,66 M  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    0,00 B/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   410 be/4 root         80,00 K      2,22 M   0,00 % 0,00 % btrfs-transaction
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-events_unbound
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-kvfree_rcu_reclaim
+ 12396 be/4 root          0,00 B     64,00 K   0,00 % 0,00 % kworker/u16:33-events_unbound
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % iotop
+ 13613 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % monitor_read
+  Total DISK READ:   80,00 K   |   Total DISK WRITE:    2,66 M  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:    0,00 B/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   410 be/4 root         80,00 K      2,22 M   0,00 % 0,00 % btrfs-transaction
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-kvfree_rcu_reclaim
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-events_unbound
+ 12396 be/4 root          0,00 B     64,00 K   0,00 % 0,00 % kworker/u16:33-events_unbound
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % iotop
+ 13613 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % monitor_read
+  Total DISK READ:   80,00 K   |   Total DISK WRITE:    2,86 M  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:  958,80 K/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   410 be/4 root         80,00 K      2,22 M   0,00 % 0,00 % btrfs-transaction
+   530 be/4 root          0,00 B    228,00 K   0,00 % 0,00 % systemd-journald
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-btrfs-endio-write
+ 12373 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:11-btrfs-endio-write
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-writeback
+ 12396 be/4 root          0,00 B    240,00 K   0,00 % 0,00 % kworker/u16:33-events_unbound
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % iotop
+ 13613 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % monitor_read
+  Total DISK READ:   80,00 K   |   Total DISK WRITE:    3,31 M  
+Current DISK READ:    0,00 B/s | Current DISK WRITE:   68,25 K/s
+   TID PRIO     USER   DISK READ  DISK WRITE SWAPIN     IO COMMAND
+    77 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:3-btrfs-delalloc
+   410 be/4 root         80,00 K      2,22 M   0,00 % 0,00 % btrfs-transaction
+   530 be/4 root          0,00 B    588,00 K   0,00 % 0,00 % systemd-journald
+   736 be/3 root          0,00 B      4,00 K   0,00 % 0,00 % auditd
+   737 be/3 root          0,00 B     32,00 K   0,00 % 0,00 % auditd
+ 12356 be/4 root          0,00 B     32,00 K   0,00 % 0,00 % kworker/u16:1-btrfs-endio-write
+ 12373 be/4 root          0,00 B     96,00 K   0,00 % 0,00 % kworker/u16:11-events_unbound
+ 12381 be/4 root          0,00 B     48,00 K   0,00 % 0,00 % kworker/u16:19-blkcg_punt_bio
+ 12396 be/4 root          0,00 B    240,00 K   0,00 % 0,00 % kworker/u16:33-gfx
+ 12397 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % kworker/u16:34-btrfs-endio-write
+ 13603 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % iotop
+ 13613 be/4 root          0,00 B     16,00 K   0,00 % 0,00 % monitor_read

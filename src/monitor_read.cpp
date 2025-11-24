@@ -43,6 +43,49 @@ std::map<pid_t, long long> last_time;
 
 std::map<uint32_t, Stats> proc_stats;
 std::map<uint32_t, std::string> proc_names;
+std::ofstream csv_file;
+bool csv_initialized = false;
+
+void init_csv() {
+    if (csv_initialized) return;
+
+    time_t now = time(nullptr);
+    struct tm *lt = localtime(&now);
+    char filename[64];
+    strftime(filename, sizeof(filename), "processed_data/eventos_log_%Y%m%d_%H%M.csv", lt);
+    csv_file << std::fixed << std::setprecision(0);
+    csv_file.open(filename);
+    csv_file << "PID,COMM,OP,WBYTES,RBYTES,TIME_us,DWBytes,DRBytes\n";
+    csv_initialized = true;
+}
+
+void print_process(event* e,uint64_t wbytes,uint64_t rbytes,double dw,double dr,long long us){
+    init_csv();    
+    std::cout << "PID: " << e->pid
+              << " COMM: " << e->comm
+              << " OP: " << (e->op == 'R' ? "READ" : "WRITE")
+              << " BYTES: " << e->bytes
+              << "    TIME us: " << us
+              << std::endl;
+
+    
+    if (csv_file.is_open()) {
+                csv_file << std::fixed;
+    // Escribir evento en CSV
+                csv_file << e->pid << ","
+                    << e->comm << ","
+                    << (e->op == 'R' ? "READ" : "WRITE") << ","
+                    << wbytes << ","
+                    << rbytes << ","
+                    << us << ","
+                    << dw << ","
+                    << dr
+                    << "\n";
+                }
+}
+
+    
+
 
 void process_event(void *data) {
     struct event *e = (struct event *)data;
@@ -64,23 +107,9 @@ void process_event(void *data) {
     auto epoch = now.time_since_epoch();
     long long us = std::chrono::duration_cast<std::chrono::microseconds>(epoch).count();
 
-    std::cout << "PID: " << e->pid
-              << " COMM: " << e->comm
-              << " OP: " << (e->op == 'R' ? "READ" : "WRITE")
-              << " BYTES: " << e->bytes
-              << "    TIME us: " << us
-              << std::endl;
-
-    std::ofstream out("processed_data/eventos_log.csv", std::ios::app);
-    if (out) {
-    static bool encabezado_escrito = false;
-    if (!encabezado_escrito && out.tellp() == 0) {
-        out << "PID,COMM,OP,WBYTES,RBYTES,TIME_us,DWBytes,DRBytes\n";
-        encabezado_escrito = true;
-    }
 
     // Determinar WBYTES/RBYTES por operación
-    uint64_t wbytes = (e->op == 'W') ? e->bytes : 0;
+     uint64_t wbytes= (e->op == 'W') ? e->bytes : 0;
     uint64_t rbytes = (e->op == 'R') ? e->bytes : 0;
 
     // Calcular derivadas
@@ -98,17 +127,9 @@ void process_event(void *data) {
     last_rbytes[e->pid] = read_stats[e->pid] + rbytes;
     last_time[e->pid] = us;
 
-    // Escribir evento en CSV
-    out << e->pid << ","
-        << e->comm << ","
-        << (e->op == 'R' ? "READ" : "WRITE") << ","
-        << wbytes << ","
-        << rbytes << ","
-        << us << ","
-        << dw << ","
-        << dr
-        << "\n";
-}
+    print_process(e,wbytes,rbytes,dw,dr,us);
+
+    
 }
 
 void print_stats() {
