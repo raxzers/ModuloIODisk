@@ -43,13 +43,56 @@ std::map<pid_t, long long> last_time;
 
 std::map<uint32_t, Stats> proc_stats;
 std::map<uint32_t, std::string> proc_names;
+std::ofstream csv_file;
+bool csv_initialized = false;
+
+void init_csv() {
+    if (csv_initialized) return;
+
+    time_t now = time(nullptr);
+    struct tm *lt = localtime(&now);
+    char filename[64];
+    strftime(filename, sizeof(filename), "processed_data/eventos_log_%Y%m%d_%H%M.csv", lt);
+
+    csv_file.open(filename);
+    csv_file << "PID,COMM,OP,WBYTES,RBYTES,TIME_us,DWBytes,DRBytes\n";
+    csv_initialized = true;
+}
+
+void print_process(event* e,uint64_t wbytes,uint64_t rbytes,double dw,double dr,long long us){
+    init_csv();    
+    std::cout << "PID: " << e->pid
+              << " COMM: " << e->comm
+              << " OP: " << (e->op == 'R' ? "READ" : "WRITE")
+              << " BYTES: " << e->bytes
+              << "    TIME us: " << us
+              << std::endl;
+
+    
+    if (csv_file.is_open()) {
+                csv_file << std::fixed;
+    // Escribir evento en CSV
+                csv_file << e->pid << ","
+                    << e->comm << ","
+                    << (e->op == 'R' ? "READ" : "WRITE") << ","
+                    << wbytes << ","
+                    << rbytes << ","
+                    << us << ","
+                    << dw << ","
+                    << dr
+                    << "\n";
+                }
+}
+
+    
+
 
 void process_event(void *data) {
-    struct event *e = (struct event *)data;
+    event *e = (event *)data;
     uint32_t pid = e->pid;
 
-    // Guardar stats en memoria
-    if (proc_stats.find(pid) == proc_stats.end()) {
+    // ---- actualizar acumulados por proceso ----
+    if (!proc_stats.count(pid)) {
         proc_stats[pid].comm = e->comm;
     }
 
@@ -59,55 +102,45 @@ void process_event(void *data) {
         proc_stats[pid].write_bytes += e->bytes;
     }
 
-    // Obtener tiempo actual en microsegundos
-    auto now = std::chrono::system_clock::now();
-    auto epoch = now.time_since_epoch();
-    long long us = std::chrono::duration_cast<std::chrono::microseconds>(epoch).count();
+    // ---- tiempo actual en microsegundos ----
+    auto now = std::chrono::steady_clock::now();
+    long long us = std::chrono::duration_cast<std::chrono::microseconds>(
+                       now.time_since_epoch())
+                       .count();
 
-    std::cout << "PID: " << e->pid
-              << " OP: " << (e->op == 'R' ? "READ" : "WRITE")
-              << " BYTES: " << e->bytes
-              << "    TIME us: " << us
-              << std::endl;
+    // valores acumulados actuales
+    uint64_t curr_w = (e->op == 'W') ? e->bytes : 0;
+    uint64_t curr_r = (e->op == 'R') ? e->bytes : 0;
 
-    std::ofstream out("processed_data/eventos_log.csv", std::ios::app);
-    if (out) {
-    static bool encabezado_escrito = false;
-    if (!encabezado_escrito && out.tellp() == 0) {
-        out << "PID,COMM,OP,WBYTES,RBYTES,TIME_us,DWBytes,DRBytes\n";
-        encabezado_escrito = true;
-    }
-
-    // Determinar WBYTES/RBYTES por operación
-    uint64_t wbytes = (e->op == 'W') ? e->bytes : 0;
-    uint64_t rbytes = (e->op == 'R') ? e->bytes : 0;
-
-    // Calcular derivadas
     double dw = 0, dr = 0;
-    if (last_time.find(e->pid) != last_time.end()) {
-        long long delta_t = us - last_time[e->pid];
-        if (delta_t > 0) {
-            dw = static_cast<double>(wbytes + write_stats[e->pid] - last_wbytes[e->pid]) / delta_t;
-            dr = static_cast<double>(rbytes + read_stats[e->pid] - last_rbytes[e->pid]) / delta_t;
-        }
+
+    // ---- si NO hay datos previos, inicializar y salir ----
+    if (!last_time.count(pid)) {
+        last_time[pid] = us;
+        last_wbytes[pid] = curr_w;
+        last_rbytes[pid] = curr_r;
+        print_process(e, curr_w, curr_r, dw, dr, us);
+        return;
     }
 
-    // Actualizar estado previo
-    last_wbytes[e->pid] = write_stats[e->pid] + wbytes;
-    last_rbytes[e->pid] = read_stats[e->pid] + rbytes;
-    last_time[e->pid] = us;
+    // ---- calcular derivadas ----
+    long long dt = us - last_time[pid];
 
-    // Escribir evento en CSV
-    out << e->pid << ","
-        << e->comm << ","
-        << (e->op == 'R' ? "READ" : "WRITE") << ","
-        << wbytes << ","
-        << rbytes << ","
-        << us << ","
-        << dw << ","
-        << dr
-        << "\n";
-}
+    if (dt > 0) {
+        long long diff_w = (long long)curr_w - (long long)last_wbytes[pid];
+        long long diff_r = (long long)curr_r - (long long)last_rbytes[pid];
+
+        dw = double(diff_w) / double(dt);
+        dr = (double)(diff_r) / double(dt);
+    }
+
+    // ---- actualizar estado previo ----
+    last_time[pid] = us;
+    last_wbytes[pid] = curr_w;
+    last_rbytes[pid] = curr_r;
+
+    // ---- imprimir con valores correctos ----
+    print_process(e, curr_w, curr_r, dw, dr, us);
 }
 
 void print_stats() {
