@@ -6,3 +6,6 @@ src/monitor_read.skel.h
 archivos/crearArchivo
 build/monitor_read
 build/monitor_read.bpf.o
+/test/io_test_tmp
+/.vscode
+/test/pruebas
