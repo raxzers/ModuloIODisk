@@ -1,13 +1,12 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-#include <cstdint>
 
-struct read_event {
+struct event {
     uint32_t pid;
-    uint32_t fd;
-    uint64_t count;
     char comm[16];
+    uint64_t bytes;
+    char op; // 'R' para read, 'W' para write
 };
 
 #endif // EVENT_H

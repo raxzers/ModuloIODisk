@@ -2,6 +2,7 @@
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
 #include <bpf/bpf_core_read.h>
+#include "event.h"
 
 char LICENSE[] SEC("license") = "Dual BSD/GPL";
 
@@ -10,12 +11,6 @@ static __inline int is_target(const char *comm) {
             __builtin_memcmp(comm, "guardarArchivo", 14) == 0);
 }
 
-struct event {
-    u32 pid;
-    char comm[16];
-    u64 bytes;
-    char op; // 'R' para read, 'W' para write
-};
 
 struct {
     __uint(type, BPF_MAP_TYPE_RINGBUF);
